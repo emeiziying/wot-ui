@@ -1,6 +1,30 @@
 # 更新日志 
 
 
+## [2.1.0](https://github.com/wot-ui/wot-ui/compare/v2.0.8...v2.1.0) (2026-06-10)
+
+
+### ✨ Features | 新功能
+
+* ✨ config-provider 新增全局配置能力并接入 button 与 tag ([#62](https://github.com/wot-ui/wot-ui/issues/62)) ([f451ba8](https://github.com/wot-ui/wot-ui/commit/f451ba8e22d4672ace475d807451347b6668e153)), closes [#13](https://github.com/wot-ui/wot-ui/issues/13)
+
+
+### 🐛 Bug Fixes | Bug 修复
+
+* 🐛 兼容性修复与类型补全 ([#43](https://github.com/wot-ui/wot-ui/issues/43)) ([953d164](https://github.com/wot-ui/wot-ui/commit/953d164642f2a2179c89dce3a64496fc5412e750))
+* 🐛 将 FAB 组件示例中的错误按钮类型更改为危险按钮 ([#65](https://github.com/wot-ui/wot-ui/issues/65)) ([ed16d5f](https://github.com/wot-ui/wot-ui/commit/ed16d5f9457c2e603f4447b52bc8751b30112269)), closes [#5](https://github.com/wot-ui/wot-ui/issues/5)
+* 🐛 修复 Cell 组件的 title 和 label 纯数字和英文场景不换行的问题 ([#64](https://github.com/wot-ui/wot-ui/issues/64)) ([b9d748f](https://github.com/wot-ui/wot-ui/commit/b9d748f29e9d88cdaebd8818b8565b52b5b959a6)), closes [#47](https://github.com/wot-ui/wot-ui/issues/47)
+* 🐛 修复 size 属性在 image 和 cssIcon 模式下的无效问题 ([#45](https://github.com/wot-ui/wot-ui/issues/45)) ([ddcc89e](https://github.com/wot-ui/wot-ui/commit/ddcc89e5d232320b2214d4f5db4febd64c899b2e))
+* 🐛 修复 toast 不支持自定义 icon 颜色 ([#54](https://github.com/wot-ui/wot-ui/issues/54)) ([3718cf4](https://github.com/wot-ui/wot-ui/commit/3718cf42140fbeefc4551e8f0540b599a0007d4e))
+* 🐛 修复 useVideoPreview 没有被导出的问题 ([#52](https://github.com/wot-ui/wot-ui/issues/52)) ([3617c07](https://github.com/wot-ui/wot-ui/commit/3617c078f55a4c13463308e429ed57c785d10580))
+* 🐛 修复不传 type 时 size 样式被默认类型覆盖的问题 ([#44](https://github.com/wot-ui/wot-ui/issues/44)) ([f811e7f](https://github.com/wot-ui/wot-ui/commit/f811e7f6c9e0aa33f968e73030e115d41ef0e511))
+
+
+### ✏️ Documentation | 文档
+
+* ✏️  补全 form-item 文档 value-align 属性 ([#67](https://github.com/wot-ui/wot-ui/issues/67)) ([a7cf766](https://github.com/wot-ui/wot-ui/commit/a7cf7666b5cba5e0d347b15f4b8d5e6db3af5b0a))
+* ✏️  更新所有文档中的链接，替换为新的域名 ([b6d2e4f](https://github.com/wot-ui/wot-ui/commit/b6d2e4f1799f2576fff9e7f4705a8c8efb292e4b))
+
 ### [2.0.8](https://github.com/wot-ui/wot-ui/compare/v2.0.7...v2.0.8) (2026-05-12)
 
 ### [2.0.7](https://github.com/wot-ui/wot-ui/compare/v2.0.6...v2.0.7) (2026-05-12)
