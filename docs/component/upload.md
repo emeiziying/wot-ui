@@ -315,7 +315,7 @@ function buildFormData({ file, formData }) {
 | --- | --- | --- | --- |
 | image | 图片，全平台支持，微信小程序使用 `chooseMedia` 实现 | `UploadFileType` | - |
 | video | 视频，全平台支持，微信小程序使用 `chooseMedia` 实现 | `UploadFileType` | - |
-| media | 图片和视频，仅微信小程序支持，使用 `chooseMedia` 实现 | `UploadFileType` | - |
+| media | 图片和视频，微信小程序和 App 支持，使用 `chooseMedia` 实现 | `UploadFileType` | - |
 | file | 普通文件，仅微信小程序支持，使用 `chooseMessageFile` 实现 | `UploadFileType` | - |
 | all | 全部类型文件，仅微信小程序和 H5 支持 | `UploadFileType` | - |
 

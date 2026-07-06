@@ -1,50 +1,52 @@
 <template>
   <!-- #ifdef APP-PLUS -->
-  <view v-if="state.show" :class="`wd-video-preview ${customClass}`" :style="`z-index: ${options.zIndex}; ${customStyle}`" @click="close">
-    <!-- #endif -->
-    <!-- #ifndef APP-PLUS -->
-    <wd-overlay
-      :show="state.show"
-      :z-index="options.zIndex"
-      :lock-scroll="true"
-      :custom-class="`wd-video-preview ${customClass}`"
-      :custom-style="customStyle"
-      @click="close"
-      @enter="handleEnter"
-      @after-leave="handleAfterLeave"
-    >
+  <wd-root-portal>
+    <view v-if="state.show" :class="`wd-video-preview ${customClass}`" :style="`z-index: ${options.zIndex}; ${customStyle}`" @click="close">
       <!-- #endif -->
-
-      <view :class="videoClass" @click.stop="">
-        <video
-          :id="videoId"
-          class="wd-video-preview__video-player"
-          v-if="state.visible && previewVideo.url"
-          :controls="true"
-          :poster="previewVideo.poster"
-          :title="previewVideo.title"
-          play-btn-position="center"
-          :enableNative="true"
-          :src="previewVideo.url"
-          :enable-progress-gesture="false"
-          @fullscreenchange="handleFullscreenChange"
-        ></video>
-      </view>
       <!-- #ifndef APP-PLUS -->
-      <view :class="closeClass" @click.stop="close">
-        <wd-icon name="close" custom-class="wd-video-preview__close-icon" />
-      </view>
+      <wd-overlay
+        :show="state.show"
+        :z-index="options.zIndex"
+        :lock-scroll="true"
+        :custom-class="`wd-video-preview ${customClass}`"
+        :custom-style="customStyle"
+        @click="close"
+        @enter="handleEnter"
+        @after-leave="handleAfterLeave"
+      >
+        <!-- #endif -->
+
+        <view :class="videoClass" @click.stop="">
+          <video
+            :id="videoId"
+            class="wd-video-preview__video-player"
+            v-if="state.visible && previewVideo.url"
+            :controls="true"
+            :poster="previewVideo.poster"
+            :title="previewVideo.title"
+            play-btn-position="center"
+            :enableNative="true"
+            :src="previewVideo.url"
+            :enable-progress-gesture="false"
+            @fullscreenchange="handleFullscreenChange"
+          ></video>
+        </view>
+        <!-- #ifndef APP-PLUS -->
+        <view :class="closeClass" @click.stop="close">
+          <wd-icon name="close" custom-class="wd-video-preview__close-icon" />
+        </view>
+        <!-- #endif -->
+        <!-- #ifdef APP-PLUS -->
+        <view v-if="!isFullScreen" :class="closeClass" @click.stop="close">
+          <wd-icon name="close" custom-class="wd-video-preview__close-icon" />
+        </view>
+        <!-- #endif -->
+        <!-- #ifndef APP-PLUS -->
+      </wd-overlay>
       <!-- #endif -->
       <!-- #ifdef APP-PLUS -->
-      <view v-if="!isFullScreen" :class="closeClass" @click.stop="close">
-        <wd-icon name="close" custom-class="wd-video-preview__close-icon" />
-      </view>
-      <!-- #endif -->
-      <!-- #ifndef APP-PLUS -->
-    </wd-overlay>
-    <!-- #endif -->
-    <!-- #ifdef APP-PLUS -->
-  </view>
+    </view>
+  </wd-root-portal>
   <!-- #endif -->
 </template>
 
@@ -64,6 +66,7 @@ export default {
 <script lang="ts" setup>
 import wdIcon from '../wd-icon/wd-icon.vue'
 import wdOverlay from '../wd-overlay/wd-overlay.vue'
+import wdRootPortal from '../wd-root-portal/wd-root-portal.vue'
 import { reactive, ref, inject, watch, computed, getCurrentInstance, nextTick } from 'vue'
 import { videoPreviewProps, type PreviewVideo, type VideoPreviewOptions, type VideoPreviewExpose } from './types'
 import { defaultOptions, getVideoPreviewOptionKey } from './index'

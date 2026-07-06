@@ -315,7 +315,7 @@ function buildFormData({ file, formData }) {
 | --- | --- | --- | --- |
 | image | Image, supported on all platforms, WeChat Mini Program uses `chooseMedia` implementation | `UploadFileType` | - |
 | video | Video, supported on all platforms, WeChat Mini Program uses `chooseMedia` implementation | `UploadFileType` | - |
-| media | Image and video, only supported on WeChat Mini Program, uses `chooseMedia` implementation | `UploadFileType` | - |
+| media | Image and video, supported on WeChat Mini Program and App, uses `chooseMedia` implementation | `UploadFileType` | - |
 | file | Regular file, only supported on WeChat Mini Program, uses `chooseMessageFile` implementation | `UploadFileType` | - |
 | all | All file types, only supported on WeChat Mini Program and H5 | `UploadFileType` | - |
 

@@ -285,10 +285,11 @@ export function useUpload(): UseUploadReturn {
           })
           // #endif
           break
-        // #ifdef MP-WEIXIN
+        // #ifdef MP-WEIXIN || APP-PLUS
         case 'media':
           uni.chooseMedia({
             count: multiple ? maxCount : 1,
+            mediaType: ['image', 'video'],
             sourceType,
             sizeType,
             camera,
@@ -297,6 +298,8 @@ export function useUpload(): UseUploadReturn {
             fail: reject
           })
           break
+        // #endif
+        // #ifdef MP-WEIXIN
         case 'file':
           uni.chooseMessageFile({
             count: multiple ? (isDef(maxCount) ? maxCount : 100) : 1,

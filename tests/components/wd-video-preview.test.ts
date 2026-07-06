@@ -1,9 +1,20 @@
 import { mount } from '@vue/test-utils'
-import WdVideoPreview from '@/uni_modules/wot-ui/components/wd-video-preview/wd-video-preview.vue'
 import { describe, test, expect, vi, beforeEach } from 'vitest'
+
+vi.mock('@/uni_modules/wot-ui/components/wd-root-portal/wd-root-portal.vue', () => ({
+  default: {
+    name: 'wd-root-portal',
+    template: '<view class="wd-root-portal"><slot /></view>'
+  }
+}))
+
+import WdVideoPreview from '@/uni_modules/wot-ui/components/wd-video-preview/wd-video-preview.vue'
 import { defineComponent, nextTick } from 'vue'
 import { type PreviewVideo } from '@/uni_modules/wot-ui/components/wd-video-preview/types'
 import { useVideoPreview } from '@/uni_modules/wot-ui/components/wd-video-preview'
+
+const currentPlatform = (process.env.UNI_PLATFORM || 'h5').toUpperCase()
+const isAppPlus = currentPlatform === 'APP-PLUS'
 
 const createUseVideoPreviewTestComponent = () => {
   return defineComponent({
@@ -20,9 +31,30 @@ const createUseVideoPreviewTestComponent = () => {
   })
 }
 
+function expectPreviewHidden(wrapper: ReturnType<typeof mount>) {
+  const preview = wrapper.find('.wd-video-preview')
+  if (isAppPlus) {
+    expect(preview.exists()).toBe(false)
+  } else {
+    expect(preview.attributes('style')).toContain('display: none')
+  }
+}
+
+function expectPreviewVisible(wrapper: ReturnType<typeof mount>) {
+  const preview = wrapper.find('.wd-video-preview')
+  expect(preview.exists()).toBe(true)
+  if (!isAppPlus) {
+    expect(preview.attributes('style')).not.toContain('display: none')
+  }
+}
+
 describe('WdVideoPreview', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    const uniGlobal = ((global as any).uni ||= {})
+    uniGlobal.createVideoContext = vi.fn(() => ({
+      requestFullScreen: vi.fn()
+    }))
   })
 
   // 测试基本渲染
@@ -30,7 +62,7 @@ describe('WdVideoPreview', () => {
     const wrapper = mount(WdVideoPreview)
 
     // 初始状态下应该存在但隐藏（display:none via wd-transition）
-    expect(wrapper.find('.wd-video-preview').attributes('style')).toContain('display: none')
+    expectPreviewHidden(wrapper)
   })
 
   // 测试打开和关闭
@@ -38,7 +70,7 @@ describe('WdVideoPreview', () => {
     const wrapper = mount(WdVideoPreview)
 
     // 初始状态下应该存在但隐藏
-    expect(wrapper.find('.wd-video-preview').attributes('style')).toContain('display: none')
+    expectPreviewHidden(wrapper)
 
     // 打开预览
     const video: PreviewVideo = {
@@ -51,7 +83,7 @@ describe('WdVideoPreview', () => {
     await new Promise((r) => setTimeout(r, 100))
 
     // 应该显示预览（display:none 移除）
-    expect(wrapper.find('.wd-video-preview').attributes('style')).not.toContain('display: none')
+    expectPreviewVisible(wrapper)
 
     // 检查视频属性
     const videoElement = wrapper.find('video')
@@ -65,7 +97,7 @@ describe('WdVideoPreview', () => {
     await new Promise((r) => setTimeout(r, 600))
 
     // 应该隐藏预览
-    expect(wrapper.find('.wd-video-preview').attributes('style')).toContain('display: none')
+    expectPreviewHidden(wrapper)
   })
 
   // 测试点击关闭按钮
@@ -83,7 +115,7 @@ describe('WdVideoPreview', () => {
     await new Promise((r) => setTimeout(r, 600))
 
     // 应该隐藏预览
-    expect(wrapper.find('.wd-video-preview').attributes('style')).toContain('display: none')
+    expectPreviewHidden(wrapper)
   })
 
   // 测试点击背景关闭
@@ -101,7 +133,7 @@ describe('WdVideoPreview', () => {
     await new Promise((r) => setTimeout(r, 600))
 
     // 应该隐藏预览
-    expect(wrapper.find('.wd-video-preview').attributes('style')).toContain('display: none')
+    expectPreviewHidden(wrapper)
   })
 
   // 测试点击视频区域不关闭
@@ -167,6 +199,14 @@ describe('WdVideoPreview', () => {
     expect(typeof (wrapper.vm as any).close).toBe('function')
   })
 
+  test('App 端通过 root portal 渲染预览节点', () => {
+    if (currentPlatform !== 'APP-PLUS') return
+
+    const wrapper = mount(WdVideoPreview)
+
+    expect(wrapper.findComponent({ name: 'wd-root-portal' }).exists()).toBe(true)
+  })
+
   test('关闭按钮默认展示在左上角', async () => {
     const wrapper = mount(WdVideoPreview)
 
@@ -191,7 +231,11 @@ describe('WdVideoPreview', () => {
     await nextTick()
 
     expect(wrapper.find('.wd-video-preview__video').classes()).toContain('is-fullscreen')
-    expect(wrapper.find('.wd-video-preview__close').classes()).toContain('is-left-top')
+    if (isAppPlus) {
+      expect(wrapper.find('.wd-video-preview__close').exists()).toBe(false)
+    } else {
+      expect(wrapper.find('.wd-video-preview__close').classes()).toContain('is-left-top')
+    }
   })
 
   test('支持通过实例方法设置全屏预览', async () => {
@@ -204,7 +248,11 @@ describe('WdVideoPreview', () => {
     await nextTick()
 
     expect(wrapper.find('.wd-video-preview__video').classes()).toContain('is-fullscreen')
-    expect(wrapper.find('.wd-video-preview__close').classes()).toContain('is-left-top')
+    if (isAppPlus) {
+      expect(wrapper.find('.wd-video-preview__close').exists()).toBe(false)
+    } else {
+      expect(wrapper.find('.wd-video-preview__close').classes()).toContain('is-left-top')
+    }
   })
 
   test('支持通过组件属性设置关闭按钮位置', async () => {
@@ -272,7 +320,11 @@ describe('WdVideoPreview', () => {
     await nextTick()
 
     expect(previewWrapper.find('.wd-video-preview__video').classes()).toContain('is-fullscreen')
-    expect(previewWrapper.find('.wd-video-preview__close').classes()).toContain('is-left-top')
+    if (isAppPlus) {
+      expect(previewWrapper.find('.wd-video-preview__close').exists()).toBe(false)
+    } else {
+      expect(previewWrapper.find('.wd-video-preview__close').classes()).toContain('is-left-top')
+    }
   })
 
   test('useVideoPreview: 支持设置关闭按钮位置', async () => {

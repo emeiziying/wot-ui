@@ -433,6 +433,57 @@ describe('useUpload', () => {
     })
   })
 
+  it('should choose mixed media files and preserve video thumb', async () => {
+    const mockChooseMedia = vi.fn().mockImplementation((options) => {
+      options.success({
+        tempFiles: [
+          { tempFilePath: 'temp/image.jpg', fileType: 'image', size: 1024, duration: 0 },
+          { tempFilePath: 'temp/video.mp4', thumbTempFilePath: 'temp/thumb.jpg', fileType: 'video', size: 10240, duration: 15 }
+        ],
+        type: 'mix'
+      })
+    })
+    ;(global as any).uni.chooseMedia = mockChooseMedia
+
+    const files = await chooseFile({
+      accept: 'media',
+      multiple: true,
+      maxCount: 5,
+      sizeType: ['compressed'],
+      sourceType: ['album'],
+      compressed: true,
+      maxDuration: 30,
+      camera: 'front'
+    })
+
+    expect(mockChooseMedia).toHaveBeenCalledWith(
+      expect.objectContaining({
+        count: 5,
+        mediaType: ['image', 'video'],
+        sizeType: ['compressed'],
+        sourceType: ['album'],
+        maxDuration: 30,
+        camera: 'front'
+      })
+    )
+    expect(files).toEqual([
+      {
+        path: 'temp/image.jpg',
+        size: 1024,
+        type: 'image',
+        thumb: 'temp/image.jpg',
+        duration: 0
+      },
+      {
+        path: 'temp/video.mp4',
+        size: 10240,
+        type: 'video',
+        thumb: 'temp/thumb.jpg',
+        duration: 15
+      }
+    ])
+  })
+
   // 测试选择文件失败的情况
   it('should handle choose file failure', async () => {
     // In test env, chooseMedia is called first; mock it to fail so the promise rejects.
