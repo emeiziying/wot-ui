@@ -4,7 +4,15 @@ import { describe, expect, test, vi, beforeEach } from 'vitest'
 import { type UploadFile } from '@/uni_modules/wot-ui/components/wd-upload/types'
 import { nextTick } from 'vue'
 
+vi.mock('@/uni_modules/wot-ui/components/wd-root-portal/wd-root-portal.vue', () => ({
+  default: {
+    name: 'wd-root-portal',
+    template: '<view class="wd-root-portal"><slot /></view>'
+  }
+}))
+
 const previewVideoSpy = vi.fn()
+
 vi.mock('@/uni_modules/wot-ui/components/wd-video-preview', () => ({
   useVideoPreview: () => ({
     previewVideo: previewVideoSpy,
@@ -190,6 +198,12 @@ describe('WdUpload', () => {
     await videoThumb.trigger('click')
 
     expect(previewVideoSpy).toHaveBeenCalled()
+    expect(previewVideoSpy).toHaveBeenCalledWith({
+      url: 'https://example.com/video1.mp4',
+      poster: 'https://example.com/thumb1.jpg',
+      title: 'video1.mp4',
+      fullScreen: true
+    })
   })
 
   test('自定义上传方法', async () => {

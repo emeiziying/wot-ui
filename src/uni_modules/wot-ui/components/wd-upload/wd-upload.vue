@@ -502,7 +502,14 @@ function handlePreviewVieo(index: number, lists: UploadFileItem[]) {
   // #endif
 
   // #ifndef MP-WEIXIN
-  previewVideo({ url: lists[index].url, poster: lists[index].thumb, title: lists[index].name })
+  previewVideo({
+    url: lists[index].url,
+    poster: lists[index].thumb,
+    title: lists[index].name,
+    // #ifdef APP-PLUS
+    fullScreen: true
+    // #endif
+  })
   // #endif
 }
 

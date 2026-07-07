@@ -28,6 +28,7 @@
             :enableNative="true"
             :src="previewVideo.url"
             :enable-progress-gesture="false"
+            :show-fullscreen-btn="showFullscreenBtn"
             @fullscreenchange="handleFullscreenChange"
           ></video>
         </view>
@@ -116,6 +117,13 @@ const closePosition = computed(() => {
 
 const videoClass = computed(() => ['wd-video-preview__video', isFullScreen.value ? 'is-fullscreen' : ''])
 const closeClass = computed(() => ['wd-video-preview__close', `is-${closePosition.value}`])
+const showFullscreenBtn = computed(() => {
+  let show = true
+  // #ifdef APP-PLUS
+  show = false
+  // #endif
+  return show
+})
 
 // 监听选项变化
 watch(

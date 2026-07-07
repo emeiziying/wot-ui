@@ -91,6 +91,7 @@ describe('WdVideoPreview', () => {
     expect(videoElement.attributes('src')).toBe(video.url)
     expect(videoElement.attributes('poster')).toBe(video.poster)
     expect(videoElement.attributes('title')).toBe(video.title)
+    expect(videoElement.attributes('show-fullscreen-btn')).toBe(isAppPlus ? 'false' : 'true')
 
     // 关闭预览
     ;(wrapper.vm as any).close()
