@@ -218,6 +218,19 @@ export function useUpload(): UseUploadReturn {
     }))
   }
 
+  function getMediaSizeRatio() {
+    const platform = typeof process !== 'undefined' ? process.env.UNI_PLATFORM?.toUpperCase() : ''
+    if (platform === 'APP-PLUS') return 1024
+    if (platform === 'MP-WEIXIN') return 1
+
+    let sizeRatio = 1
+    // #ifdef APP-PLUS
+    // App chooseMedia 返回 KB，组件 maxSize 使用 byte。
+    sizeRatio = 1024
+    // #endif
+    return sizeRatio
+  }
+
   /**
    * 选择文件
    */
@@ -291,11 +304,6 @@ export function useUpload(): UseUploadReturn {
             reject(new Error('uni.chooseMedia is not available'))
             return
           }
-          let sizeRatio = 1
-          // #ifdef APP-PLUS
-          // App chooseMedia 返回 KB，组件 maxSize 使用 byte。
-          sizeRatio = 1024
-          // #endif
           uni.chooseMedia({
             count: multiple ? maxCount : 1,
             mediaType: ['image', 'video'],
@@ -303,7 +311,7 @@ export function useUpload(): UseUploadReturn {
             sizeType,
             camera,
             maxDuration,
-            success: (res) => resolve(formatMedia(res, sizeRatio)),
+            success: (res) => resolve(formatMedia(res, getMediaSizeRatio())),
             fail: reject
           })
           break

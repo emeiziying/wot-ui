@@ -502,10 +502,13 @@ function handlePreviewVieo(index: number, lists: UploadFileItem[]) {
   // #endif
 
   // #ifndef MP-WEIXIN
+  const item = lists[index]
+  if (!item) return
+
   previewVideo({
-    url: lists[index].url,
-    poster: lists[index].thumb,
-    title: lists[index].name,
+    url: item.url,
+    poster: item.thumb,
+    title: item.name,
     // #ifdef APP-PLUS
     fullScreen: true
     // #endif

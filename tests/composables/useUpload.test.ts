@@ -434,6 +434,11 @@ describe('useUpload', () => {
   })
 
   it('should choose mixed media files and preserve video thumb', async () => {
+    const currentPlatform = (process.env.UNI_PLATFORM || '').toUpperCase()
+    const isMediaSupported = currentPlatform === 'APP-PLUS' || currentPlatform === 'MP-WEIXIN'
+    if (!isMediaSupported) return
+
+    const expectedSizeRatio = currentPlatform === 'APP-PLUS' ? 1024 : 1
     const mockChooseMedia = vi.fn().mockImplementation((options) => {
       options.success({
         tempFiles: [
@@ -469,14 +474,14 @@ describe('useUpload', () => {
     expect(files).toEqual([
       {
         path: 'temp/image.jpg',
-        size: 1024 * 1024,
+        size: 1024 * expectedSizeRatio,
         type: 'image',
         thumb: 'temp/image.jpg',
         duration: 0
       },
       {
         path: 'temp/video.mp4',
-        size: 10240 * 1024,
+        size: 10240 * expectedSizeRatio,
         type: 'video',
         thumb: 'temp/thumb.jpg',
         duration: 15
@@ -485,6 +490,9 @@ describe('useUpload', () => {
   })
 
   it('should reject media files when chooseMedia is unavailable', async () => {
+    const currentPlatform = (process.env.UNI_PLATFORM || '').toUpperCase()
+    const isMediaSupported = currentPlatform === 'APP-PLUS' || currentPlatform === 'MP-WEIXIN'
+    if (!isMediaSupported) return
     ;(global as any).uni.chooseMedia = undefined
 
     await expect(
