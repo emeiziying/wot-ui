@@ -469,19 +469,32 @@ describe('useUpload', () => {
     expect(files).toEqual([
       {
         path: 'temp/image.jpg',
-        size: 1024,
+        size: 1024 * 1024,
         type: 'image',
         thumb: 'temp/image.jpg',
         duration: 0
       },
       {
         path: 'temp/video.mp4',
-        size: 10240,
+        size: 10240 * 1024,
         type: 'video',
         thumb: 'temp/thumb.jpg',
         duration: 15
       }
     ])
+  })
+
+  it('should reject media files when chooseMedia is unavailable', async () => {
+    ;(global as any).uni.chooseMedia = undefined
+
+    await expect(
+      chooseFile({
+        accept: 'media',
+        multiple: true,
+        maxCount: 5,
+        sourceType: ['album']
+      })
+    ).rejects.toThrow('uni.chooseMedia is not available')
   })
 
   // 测试选择文件失败的情况

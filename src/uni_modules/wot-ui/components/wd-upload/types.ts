@@ -265,7 +265,7 @@ export const uploadProps = {
    * 文件类型，可选值：'image' | 'video' | 'media' | 'all' | 'file'
    * 默认值：image
    * 描述：'media'表示同时支持'image'和'video'，'file'表示支持除'image'和'video'外的所有文件类型，'all'标识支持全部类型文件
-   * 'media'和'file'仅微信支持，'all'仅微信和H5支持
+   * 'media'支持微信和 App（HBuilderX 4.52+），'file'仅微信支持，'all'仅微信和H5支持
    */
   accept: makeStringProp<UploadFileType>('image'),
   /**
