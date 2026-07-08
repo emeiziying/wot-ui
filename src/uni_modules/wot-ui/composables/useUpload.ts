@@ -208,27 +208,14 @@ export function useUpload(): UseUploadReturn {
   /**
    * 格式化媒体信息
    */
-  function formatMedia(res: UniApp.ChooseMediaSuccessCallbackResult, sizeRatio = 1): ChooseFile[] {
+  function formatMedia(res: UniApp.ChooseMediaSuccessCallbackResult): ChooseFile[] {
     return res.tempFiles.map((item) => ({
       type: item.fileType,
       path: item.tempFilePath,
       thumb: item.fileType === 'video' ? item.thumbTempFilePath : item.tempFilePath,
-      size: isDef(item.size) ? item.size * sizeRatio : item.size,
+      size: item.size,
       duration: item.duration
     }))
-  }
-
-  function getMediaSizeRatio() {
-    const platform = typeof process !== 'undefined' ? process.env.UNI_PLATFORM?.toUpperCase() : ''
-    if (platform === 'APP-PLUS') return 1024
-    if (platform === 'MP-WEIXIN') return 1
-
-    let sizeRatio = 1
-    // #ifdef APP-PLUS
-    // App chooseMedia 返回 KB，组件 maxSize 使用 byte。
-    sizeRatio = 1024
-    // #endif
-    return sizeRatio
   }
 
   /**
@@ -311,7 +298,7 @@ export function useUpload(): UseUploadReturn {
             sizeType,
             camera,
             maxDuration,
-            success: (res) => resolve(formatMedia(res, getMediaSizeRatio())),
+            success: (res) => resolve(formatMedia(res)),
             fail: reject
           })
           break
