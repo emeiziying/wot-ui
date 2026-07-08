@@ -84,6 +84,7 @@ describe('useUpload', () => {
       }
       if (options.complete) options.complete()
     })
+    ;(global as any).uni.getFileInfo = undefined
   })
 
   // 测试基本上传功能
@@ -433,7 +434,7 @@ describe('useUpload', () => {
     })
   })
 
-  it('should choose mixed media files without changing byte size and preserve video thumb', async () => {
+  it('should choose mixed media files with getFileInfo byte size and preserve video thumb', async () => {
     const currentPlatform = (process.env.UNI_PLATFORM || '').toUpperCase()
     const isMediaSupported = currentPlatform === 'APP-PLUS' || currentPlatform === 'MP-WEIXIN'
     if (!isMediaSupported) return
@@ -441,13 +442,21 @@ describe('useUpload', () => {
     const mockChooseMedia = vi.fn().mockImplementation((options) => {
       options.success({
         tempFiles: [
-          { tempFilePath: 'temp/image.jpg', fileType: 'image', size: 1572864, duration: 0 },
-          { tempFilePath: 'temp/video.mp4', thumbTempFilePath: 'temp/thumb.jpg', fileType: 'video', size: 10485760, duration: 15 }
+          { tempFilePath: 'temp/image.jpg', fileType: 'image', size: 97880832, duration: 0 },
+          { tempFilePath: 'temp/video.mp4', thumbTempFilePath: 'temp/thumb.jpg', fileType: 'video', size: 6058.148, byteSize: 6203544, duration: 15 }
         ],
         type: 'mix'
       })
     })
     ;(global as any).uni.chooseMedia = mockChooseMedia
+    const mockGetFileInfo = vi.fn().mockImplementation((options) => {
+      options.success({
+        errMsg: 'getFileInfo:ok',
+        size: options.filePath.endsWith('image.jpg') ? 7690778 : 6203544,
+        digest: 'mock-digest'
+      })
+    })
+    ;(global as any).uni.getFileInfo = mockGetFileInfo
 
     const files = await chooseFile({
       accept: 'media',
@@ -470,17 +479,19 @@ describe('useUpload', () => {
         camera: 'front'
       })
     )
+    expect(mockGetFileInfo).toHaveBeenCalledWith(expect.objectContaining({ filePath: 'temp/image.jpg' }))
+    expect(mockGetFileInfo).toHaveBeenCalledWith(expect.objectContaining({ filePath: 'temp/video.mp4' }))
     expect(files).toEqual([
       {
         path: 'temp/image.jpg',
-        size: 1572864,
+        size: 7690778,
         type: 'image',
         thumb: 'temp/image.jpg',
         duration: 0
       },
       {
         path: 'temp/video.mp4',
-        size: 10485760,
+        size: 6203544,
         type: 'video',
         thumb: 'temp/thumb.jpg',
         duration: 15

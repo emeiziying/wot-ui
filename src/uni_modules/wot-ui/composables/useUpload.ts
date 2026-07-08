@@ -208,14 +208,36 @@ export function useUpload(): UseUploadReturn {
   /**
    * 格式化媒体信息
    */
-  function formatMedia(res: UniApp.ChooseMediaSuccessCallbackResult): ChooseFile[] {
-    return res.tempFiles.map((item) => ({
-      type: item.fileType,
-      path: item.tempFilePath,
-      thumb: item.fileType === 'video' ? item.thumbTempFilePath : item.tempFilePath,
-      size: item.size,
-      duration: item.duration
-    }))
+  function getFileByteSize(filePath: string): Promise<number | undefined> {
+    if (!filePath || !isFunction(uni.getFileInfo)) return Promise.resolve(undefined)
+
+    return new Promise((resolve) => {
+      uni.getFileInfo({
+        filePath,
+        success: (res) => resolve(res.size),
+        fail: () => resolve(undefined)
+      })
+    })
+  }
+
+  function getMediaFallbackSize(item: { size?: number; byteSize?: number }) {
+    return isDef(item.byteSize) ? item.byteSize : item.size
+  }
+
+  async function formatMedia(res: UniApp.ChooseMediaSuccessCallbackResult): Promise<ChooseFile[]> {
+    return Promise.all(
+      res.tempFiles.map(async (item) => {
+        const size = await getFileByteSize(item.tempFilePath)
+
+        return {
+          type: item.fileType,
+          path: item.tempFilePath,
+          thumb: item.fileType === 'video' ? item.thumbTempFilePath : item.tempFilePath,
+          size: isDef(size) ? size : getMediaFallbackSize(item as { size?: number; byteSize?: number }),
+          duration: item.duration
+        }
+      })
+    )
   }
 
   /**
