@@ -87,6 +87,7 @@ const state = reactive({
 
 const previewVideo = reactive<PreviewVideo>({ url: '', poster: '', title: '' })
 const fullScreenValue = ref<boolean | undefined>()
+const showFullscreenBtnValue = ref<boolean | undefined>()
 const closePositionValue = ref<VideoPreviewOptions['closePosition']>()
 
 // App 端原生 video 走系统全屏，需要唯一 id 创建上下文
@@ -118,11 +119,9 @@ const closePosition = computed(() => {
 const videoClass = computed(() => ['wd-video-preview__video', isFullScreen.value ? 'is-fullscreen' : ''])
 const closeClass = computed(() => ['wd-video-preview__close', `is-${closePosition.value}`])
 const showFullscreenBtn = computed(() => {
-  let show = true
-  // #ifdef APP-PLUS
-  show = false
-  // #endif
-  return show
+  const optionShowFullscreenBtn = videoPreviewOption.value.showFullscreenBtn
+  if (isDef(optionShowFullscreenBtn)) return optionShowFullscreenBtn!
+  return isDef(showFullscreenBtnValue.value) ? showFullscreenBtnValue.value! : props.showFullscreenBtn
 })
 
 // 监听选项变化
@@ -171,6 +170,7 @@ function reset(option: VideoPreviewOptions) {
     previewVideo.poster = option.poster
     previewVideo.title = option.title
     fullScreenValue.value = option.fullScreen
+    showFullscreenBtnValue.value = option.showFullscreenBtn
     closePositionValue.value = option.closePosition
   }
 }
@@ -217,6 +217,7 @@ function open(video: VideoPreviewOptions) {
   previewVideo.poster = video.poster
   previewVideo.title = video.title
   fullScreenValue.value = video.fullScreen
+  showFullscreenBtnValue.value = video.showFullscreenBtn
   closePositionValue.value = video.closePosition
   state.show = true
 }

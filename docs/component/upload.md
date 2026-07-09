@@ -297,6 +297,7 @@ function buildFormData({ file, formData }) {
 | status-key | `file` 数据结构中状态字段对应的 key | `string` | `status` |
 | compressed | 是否压缩视频，当 `accept` 为 `video` 或 `media` 时生效 | `boolean` | `true` |
 | max-duration | 拍摄视频最大时长，单位为秒 | `number` | `60` |
+| show-video-fullscreen-btn | 是否显示视频预览原生全屏按钮 | `boolean` | `true` |
 | camera | 使用前置或后置相机，可选值为 `front`、`back` | `UploadCameraType` | `back` |
 | image-mode | 预览图片的 `mode` 属性 | `ImageMode` | `aspectFit` |
 | success-status | 接口响应成功状态码 | <code>number &#124; number[]</code> | `200` |
@@ -325,6 +326,7 @@ function buildFormData({ file, formData }) {
 | --- | --- | --- | --- |
 | uid | 当前上传文件在列表中的唯一标识 | `number` | - |
 | thumb | 缩略图地址 | `string` | - |
+| type | 文件类型 | <code>'image' &#124; 'video' &#124; 'file'</code> | - |
 | name | 当前文件名称 | `string` | - |
 | status | 当前文件上传状态，可选值为 `pending`、`loading`、`success`、`fail` | `UploadStatusType` | - |
 | size | 文件大小 | `number` | - |

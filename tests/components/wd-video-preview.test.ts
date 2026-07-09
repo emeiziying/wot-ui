@@ -91,7 +91,7 @@ describe('WdVideoPreview', () => {
     expect(videoElement.attributes('src')).toBe(video.url)
     expect(videoElement.attributes('poster')).toBe(video.poster)
     expect(videoElement.attributes('title')).toBe(video.title)
-    expect(videoElement.attributes('show-fullscreen-btn')).toBe(isAppPlus ? 'false' : 'true')
+    expect(videoElement.attributes('show-fullscreen-btn')).toBe('true')
 
     // 关闭预览
     ;(wrapper.vm as any).close()
@@ -256,6 +256,33 @@ describe('WdVideoPreview', () => {
     }
   })
 
+  test('支持通过组件属性隐藏原生全屏按钮', async () => {
+    const wrapper = mount(WdVideoPreview, {
+      props: {
+        showFullscreenBtn: false
+      }
+    })
+
+    ;(wrapper.vm as any).open({
+      url: 'https://example.com/video.mp4'
+    })
+    await new Promise((r) => setTimeout(r, 100))
+
+    expect(wrapper.find('video').attributes('show-fullscreen-btn')).toBe('false')
+  })
+
+  test('支持通过实例方法隐藏原生全屏按钮', async () => {
+    const wrapper = mount(WdVideoPreview)
+
+    ;(wrapper.vm as any).open({
+      url: 'https://example.com/video.mp4',
+      showFullscreenBtn: false
+    })
+    await new Promise((r) => setTimeout(r, 100))
+
+    expect(wrapper.find('video').attributes('show-fullscreen-btn')).toBe('false')
+  })
+
   test('支持通过组件属性设置关闭按钮位置', async () => {
     const wrapper = mount(WdVideoPreview, {
       props: {
@@ -326,6 +353,20 @@ describe('WdVideoPreview', () => {
     } else {
       expect(previewWrapper.find('.wd-video-preview__close').classes()).toContain('is-left-top')
     }
+  })
+
+  test('useVideoPreview: 支持隐藏原生全屏按钮', async () => {
+    const TestComponent = createUseVideoPreviewTestComponent()
+    const wrapper = mount(TestComponent)
+    const previewWrapper = wrapper.findAllComponents(WdVideoPreview)[0]
+
+    ;(wrapper.vm as any).videoPreview.previewVideo({
+      url: 'https://example.com/hook.mp4',
+      showFullscreenBtn: false
+    })
+    await new Promise((r) => setTimeout(r, 100))
+
+    expect(previewWrapper.find('video').attributes('show-fullscreen-btn')).toBe('false')
   })
 
   test('useVideoPreview: 支持设置关闭按钮位置', async () => {

@@ -38,6 +38,8 @@ export type UploadFileItem = {
   [key: string]: any
   // 	当前上传文件在列表中的唯一标识
   uid: number
+  // 文件类型
+  type?: ChooseFile['type']
   // 缩略图地址
   thumb?: string
   // 当前文件名称，仅h5支持
@@ -292,6 +294,12 @@ export const uploadProps = {
    * 默认值：60
    */
   maxDuration: makeNumberProp(60),
+  /**
+   * 是否显示视频预览原生全屏按钮
+   * 类型：boolean
+   * 默认值：true
+   */
+  showVideoFullscreenBtn: makeBooleanProp(true),
   /**
    * 使用前置或者后置相机，当 accept 为 video | media 时生效，可选值为：back｜front。
    * 类型：UploadCameraType

@@ -89,6 +89,24 @@ describe('WdUpload', () => {
     expect(videos.length + files.length).toBeGreaterThan(0)
   })
 
+  test('通过 type 识别无扩展名的 Android content 视频', async () => {
+    const videoUrl = 'content://com.android.providers.media.documents/document/video%3A10687'
+    const thumb = 'file:///tmp/video-thumb.jpg'
+    const wrapper = mount(WdUpload)
+
+    await (wrapper.vm as any).initFile({
+      path: videoUrl,
+      type: 'video',
+      thumb,
+      size: 1024
+    })
+    await nextTick()
+
+    expect(wrapper.find('.wd-upload__video').exists()).toBe(true)
+    expect(wrapper.find('.wd-upload__file').exists()).toBe(false)
+    expect(wrapper.find('.wd-upload__picture').attributes('src')).toBe(thumb)
+  })
+
   test('删除文件', async () => {
     const wrapper = mount(WdUpload, {
       props: {
@@ -202,7 +220,32 @@ describe('WdUpload', () => {
       url: 'https://example.com/video1.mp4',
       poster: 'https://example.com/thumb1.jpg',
       title: 'video1.mp4',
-      fullScreen: true
+      showFullscreenBtn: true
+    })
+  })
+
+  test('视频预览支持关闭原生全屏按钮', async () => {
+    previewVideoSpy.mockClear()
+    const wrapper = mount(WdUpload, {
+      props: {
+        showVideoFullscreenBtn: false,
+        fileList: [
+          {
+            url: 'https://example.com/video1.mp4',
+            name: 'video1.mp4',
+            thumb: 'https://example.com/thumb1.jpg'
+          }
+        ]
+      }
+    })
+
+    await wrapper.find('.wd-upload__video').trigger('click')
+
+    expect(previewVideoSpy).toHaveBeenCalledWith({
+      url: 'https://example.com/video1.mp4',
+      poster: 'https://example.com/thumb1.jpg',
+      title: 'video1.mp4',
+      showFullscreenBtn: false
     })
   })
 
